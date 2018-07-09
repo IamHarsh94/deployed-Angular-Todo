@@ -1,0 +1,31 @@
+<div class="note-div" style="margin-top:20px;margin-left:10px;margin-right:10px" [ngClass]=" layout=='column wrap' ? 'list-note' : 'note-width' ">
+  <div [ngStyle]="{'background-color':note.notePreferences.color}" fxFlex.xs="100" [ngClass]=" layout=='column wrap' ? 'list-note' : 'note-width' ">
+    <div>
+      <div fxLayout="row">
+
+        <div fxFlex.lg="90" fxFlex.md="90" fxFlex.sm="90" fxFlex.xs="90">
+          <img *ngIf="note.note.imageUrl" style="width: 240px" src="{{note.note.imageUrl}}">
+          <div (click)="OpenUpdateComponent(note)" name="title" data-text="Title" class="note-text" id="title" [innerHTML]="note.note.title"></div>
+        </div>
+      </div>
+      <div (click)="OpenUpdateComponent(note)" name="description" data-text="Description" class="note-text " id="description" [innerHTML]="note.note.body"></div>
+    </div>
+
+    <div *ngIf="note.notePreferences.labels" style="padding-left: 10px;" fxLayout="row">
+      <mat-chip-list class="labelChip">
+        <mat-chip *ngFor="let label of note.notePreferences.labels">
+          <span>{{label.name}} &nbsp;</span>
+          <img src="/assets/icons/close.svg" alt="X" class="labelCross" height="15px" (click)="addOrRemoveLabel($event, note, label)">
+
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+    <button mat-icon-button [matMenuTriggerFor]="menu" class="icon-button">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" overlapTrigger="false">
+      <button mat-menu-item (click)="restore(note)">Restore</button>
+      <button mat-menu-item (click)="deleteForever(note)">Delete Forever</button>
+    </mat-menu>
+
+  </div>

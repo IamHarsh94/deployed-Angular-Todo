@@ -1,0 +1,45 @@
+[data-text]:empty:before {
+  content: attr(data-text);
+  color: grey;
+}
+.note-text {
+  outline: none;
+  border: none;
+  padding-bottom: 25px;
+}
+.btn-close {
+  font-family: 'Roboto',arial,sans-serif;
+  font-weight: bold;
+}
+.active {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: url("../../../assets/icons/tick.svg");
+  border-color:gray;
+  border-width:thin;
+  border-style:solid;
+}
+.color-pallete {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border-color: white;
+  border-width: thin;
+  border-style: solid;
+}
+.white-border {
+  border-color: gray;
+  border-width: thin;
+  border-style: solid;
+}
+
+.note-margin {
+  margin-top: 8vh;
+}
+
+@media screen and (max-width:900px) and (min-width:320px) {
+  .note-margin {
+    margin-top: 25vh;
+  }
+}

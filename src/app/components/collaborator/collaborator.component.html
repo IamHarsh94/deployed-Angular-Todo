@@ -1,0 +1,37 @@
+<div fxLayout="column">
+  <b>Collaborators:</b>
+  <mat-divider style="margin-top: 7px"></mat-divider>
+
+  <div fxLayout="row" fxLayoutGap="10px" style="margin-top: 20px">
+      <img *ngIf="NoteOwnerResponse.picUrl" src="{{NoteOwnerResponse.picUrl}}" class="pic">
+      <mat-icon class="pic" style="font-size: 40px" *ngIf="NoteOwnerResponse.picUrl == null ||NoteOwnerResponse.picUrl == undefined">account_circle</mat-icon>
+      <div fxLayout="column">
+      <!-- <div [innerHTML]="collaborator.fullName"></div>
+        <div [innerHTML]="collaborator.userEmail"></div> -->
+      <div [innerHTML]="NoteOwnerResponse.name"><b>(Owner)</b></div>
+      <div [innerHTML]="NoteOwnerResponse.email"></div>
+    </div>
+  </div>
+  
+  <div *ngIf="collabArr" style="margin-top: 10px">
+  <div fxLayout="row" *ngFor="let collab of collabArr" fxLayoutGap="10px" style="margin-top: 7px">
+    
+    <img *ngIf="collab.picUrl" src="{{collab.picUrl}}" class="pic">
+    <mat-icon class="pic" style="font-size: 40px" *ngIf="collab.picUrl == null || collab.picUrl == undefined">account_circle</mat-icon>
+      
+      <div fxLayout="column">
+        <div [innerHTML]="collab.name"></div>
+        <div [innerHTML]="collab.email"></div>
+      </div>
+      
+      <div>
+        <button class="closebutton" mat-button><mat-icon (click)="removeCollab(collab)">close</mat-icon></button>
+      </div>
+  
+  </div>
+  
+</div>
+  <input class="note-text" name="personEmail" [(ngModel)]="model.personEmail" placeholder="Person or email to share with">
+
+  <button mat-button (click)="addCollab()">close</button>
+</div>

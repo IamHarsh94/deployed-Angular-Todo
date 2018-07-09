@@ -1,0 +1,182 @@
+<!--<p>
+  notetemplate works!
+</p>-->
+
+<div class="note-div" style="margin-top:20px;margin-left:10px;margin-right:10px" [ngClass]=" layout=='column wrap' ? 'list-note' : 'note-width' ">
+  <div [ngStyle]="{'background-color':note.notePreferences.color}" fxFlex.xs="100" [ngClass]=" layout=='column wrap' ? 'list-note' : 'note-width' ">
+    <div>
+      
+      <div fxLayout="row">
+        <div fxFlex.lg="90" fxFlex.md="90" fxFlex.sm="90" fxFlex.xs="90">
+          <img *ngIf="note.note.imageUrl" style="width: 240px" src="{{note.note.imageUrl}}">
+          <div (click)="OpenUpdateComponent(note)" name="title" data-text="Title" class="note-text" id="title" [innerHTML]="note.note.title"></div>
+        </div>
+        <div *ngIf="!note.notePreferences.pin" fxFlex="10" (click)="pinNote(note)" class="add-ons pin">
+          <img src={{pin}}/>
+        </div>
+        <div *ngIf="note.notePreferences.pin" fxFlex="10" (click)="pinNote(note)" class="pin">
+          <img src="/assets/icons/unpin.svg"/>
+        </div>
+      </div>
+
+      <div (click)="OpenUpdateComponent(note)" name="description" data-text="Description" class="note-text " id="description" [innerHTML]="note.note.body"></div>
+    </div>
+
+    <div *ngIf="note.notePreferences.remainder" style="padding-left: 10px;">
+      <mat-chip-list class="labelChip">
+        <mat-chip fxLayoutGap="5px">
+          <img src="{{clock}}">
+          <span>{{note.notePreferences.remainder|date:'MMM dd, hh:mm a'}} &nbsp;</span>
+          <img src="/assets/icons/close.svg" alt="X" class="labelCross" height="15px" (click)="removeReminder($event, note)">
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+<!-- 
+    <div *ngIf="note.notePreferences.labels" style="padding-left: 10px;" fxLayout="row">
+      <mat-chip-list class="labelChip">
+        <mat-chip *ngFor="let label of note.notePreferences.labels">
+          <span>{{label.name}} &nbsp;</span>
+          <img src="/assets/icons/close.svg" alt="X" class="labelCross" height="15px" (click)="addOrRemoveLabel($event, note, label)">
+        </mat-chip>
+      </mat-chip-list>
+    </div> -->
+
+
+
+    <div *ngIf="note.notePreferences.labels">
+        <mat-chip-list class="labelChip">
+          <mat-chip *ngFor="let label of note.notePreferences.labels" fxLayout="row">
+            <span style="height: 18px;">{{label.name}} &nbsp;</span>
+            <img src="/assets/icons/close.svg" alt="X" class="labelCross" height="15px" (click)="addOrRemoveLabel($event, note, label)">
+          </mat-chip>
+        </mat-chip-list>
+    </div>
+   
+
+     <div fxLayout="row" style="margin-left: 10px">
+      <!-- <button mat-mini-fab matTooltip="Info about the action" color="primary">
+        <mat-icon>account_circle</mat-icon>
+      </button> -->
+      <div *ngFor="let collab of collabArr" matTooltip="{{collab.name}}">
+        <img *ngIf="collab.picUrl" src="{{collab.picUrl}}" class="pic">
+        <mat-icon class="pic" style="font-size: 40px" *ngIf="collab.picUrl == null || collab.picUrl == undefined">account_circle</mat-icon>
+      </div>
+    </div>
+
+
+    <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-around center" class="add-ons">
+      <button mat-icon-button matTooltip="Remind me" [matMenuTriggerFor]="remindermenu" class="icon-button">
+
+        <mat-icon>touch_app</mat-icon>
+      </button>
+
+      <button mat-icon-button  matTooltip="Collaborator" class="icon-button" (click)="openCollab(note)">
+        <mat-icon>person_add</mat-icon>
+      </button>
+      
+      
+      <button mat-icon-button matTooltip="Change color" class="color-comp icon-button" style="background-color:inherit" [matMenuTriggerFor]="colormenu">
+        <mat-icon>color_lens</mat-icon>
+      </button>
+
+      <mat-menu #colormenu="matMenu">
+        <div mat-menu-item *ngFor="let color of colors" fxLayout="row" fxLayoutGap="2px">
+          <div *ngFor="let color1 of color">
+            <div [style.background-color]="color1" [ngClass]="color1 == selectedcolor ?  'active' :  (color1 == 'white'  ?  'white-border color-pallete' :  'color-pallete')"
+              (click)="setColor(note,color1)">
+            </div>
+          </div>
+        </div>
+      </mat-menu>
+
+      <button mat-icon-button  matTooltip="Add image" class="icon-button" (click)="triggerUpload(note)">
+        <mat-icon>image</mat-icon>
+        <input style="display: none;" type="file" id="{{ 'note-' + note.note.noteId }}" [ngModel]="note.image" (change)="imageUpload($event, note)">
+      </button>
+      <!-- <button mat-icon-button class="icon-button" (click)="archive(note)">
+        <mat-icon>archive</mat-icon>
+      </button> -->
+      <button mat-icon-button class="icon-button" (click)="archive(note)">
+          <mat-icon>{{note.notePreferences.status == 'ARCHIVE' ? 'unarchive' : 'archive' }}</mat-icon>
+        </button>
+
+      <button mat-icon-button  matTooltip="More" [matMenuTriggerFor]="menu" class="icon-button">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu" overlapTrigger="false">
+        <button mat-menu-item [matMenuTriggerFor]="labelmenu">Add Label</button>
+
+        <button mat-menu-item (click)="copy(note)">Copy Note</button>
+        <button mat-menu-item (click)="trash(note)">Delete Note</button>
+
+      </mat-menu>
+      <mat-menu #labelmenu="matMenu">
+        <span style="display: block;">Label Note</span>
+        <div *ngFor="let label of labels">
+          <mat-checkbox [checked]="checkLabel(note, label)" (change)="addOrRemoveLabel($event, note, label)">{{label.name}}</mat-checkbox>
+        </div>
+      </mat-menu>
+    </div>
+
+  </div>
+
+  <mat-menu #remindermenu="matMenu" class="div-style" >
+    <div>
+      <button mat-menu-item>
+        <b>Reminder:</b>
+      </button>
+    </div>
+
+    <div>
+      <button (click)="setToday(note)" type="submit" mat-menu-item>
+        <span>Later today</span>
+        <span>8:00PM</span>
+      </button>
+    </div>
+
+    <div>
+      <button (click)="setTomorrow(note)" type="submit" mat-menu-item>
+        <span>Tomorrow</span>
+        <span>8:00AM</span>
+      </button>
+    </div>
+
+    <div>
+      <button (click)="setNextweek(note)" type="submit" mat-menu-item>
+        <span>Next week</span>
+        <span>mon,8:00AM</span>
+      </button>
+    </div>
+
+    <div>
+      <button type="submit" [matMenuTriggerFor]="pickdatemenu" mat-menu-item>
+        <img style="margin-bottom: -3px;" src="{{clock}}">
+        <span>Pick date & time</span>
+      </button>
+    </div>
+  </mat-menu>
+
+  <mat-menu #pickdatemenu="matMenu" class="div-style">
+      <div fxLayout="row" fxLayoutGap="2px">
+      <div (click)="showform1()">
+        <img src="{{backarrow}}">
+      </div>
+      <b>pick date & time:</b>
+    </div>
+
+    <div>
+      <div>
+        <input [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Date Time" [(ngModel)]="note.notePreferences.remainder">
+        <owl-date-time #dt1></owl-date-time>
+      </div>
+    </div>
+
+    <div>
+      <button class="done-btn-style" (click)="pickDateTime(note)" type="submit" mat-menu-item>
+        <span>Done</span>
+      </button>
+    </div>
+  </mat-menu>
+
+</div>

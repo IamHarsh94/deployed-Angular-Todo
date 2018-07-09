@@ -1,0 +1,191 @@
+<div fxLayoutAlign="center center" class="note-margin">
+  <mat-card fxFlex.lg="58" fxFlex.md="50" fxFlex.sm="70" fxFlex.xs="60" *ngIf="note" (click)="showNote()">
+    <div style="color: grey; padding: 0;" fxFlex="150">Take a Note ...</div>
+  </mat-card>
+</div>
+
+<div fxLayoutAlign="center center" *ngIf="mainnote">
+  <mat-card fxFlex.lg="58" fxFlex.md="45" fxFlex.sm="60" fxFlex.xs="97" [ngStyle]="{'background-color':selectedcolor}">
+    <div fxLayout="row">
+      <div fxFlex.lg="90" fxFlex.md="90" fxFlex.sm="90" fxFlex.xs="90">
+        <div contenteditable="true" style="font-weight: bold" name="title" data-text="Title" class="note-text " id="title"></div>
+      </div>
+      <div fxFlex="10" (click)="pinNote()">
+        <img src="{{this.model.notePreferences.pin ? '/assets/icons/unpin.svg' : '/assets/icons/pin.svg'}}" />
+      </div>
+    </div>
+    <div contenteditable="true" name="description" data-text="Description" class="note-text " id="description"></div>
+
+    <div *ngIf="model.notePreferences.remainder" style="padding-left: 10px;">
+      <mat-chip-list class="labelChip">
+        <mat-chip fxLayoutGap="5px">
+          <img src="{{clock}}">
+          <span>{{model.notePreferences.remainder|date:'MMM dd, hh:mm a'}} &nbsp;</span>
+          <img src="/assets/icons/close.svg" alt="X" class="labelCross" height="15px" (click)="removeReminder($event, note)">
+
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+    <br>
+    <div *ngIf="model.notePreferences.labels.length > 0" style="padding-left: 10px;" fxLayout="row">
+      <mat-chip-list class="labelChip">
+        <mat-chip *ngFor="let label of model.notePreferences.labels">
+          <span>{{label.name}} &nbsp;</span>
+          <img src="/assets/icons/close.svg" alt="X" class="labelCross" height="15px" (click)="addOrRemoveLabel($event, note, label)">
+
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+
+    <div fxLayout="row" style="opacity: .54;">
+      <div fxLayout="row" fxFlex.lg="85" fxFlex.md="70" fxFlex.sm="70" fxFlex.xs="80" fxFlex.lt-xs="80">
+        <button mat-icon-button [matMenuTriggerFor]="remindermenu" >
+          <mat-icon matTooltip="Reminder">touch_app</mat-icon>
+        </button>
+
+        <mat-menu #remindermenu="matMenu" class="div-style">
+          <div>
+            <button mat-menu-item>
+              <b>Reminder:</b>
+            </button>
+          </div>
+
+          <div>
+            <button (click)="setToday()" type="submit" mat-menu-item>
+              <span>Later today</span>
+              <span>8:00PM</span>
+            </button>
+          </div>
+
+          <div>
+            <button (click)="setTomorrow()" type="submit" mat-menu-item>
+              <span>Tomorrow</span>
+              <span>8:00AM</span>
+            </button>
+          </div>
+
+          <div>
+            <button (click)="setNextweek()" type="submit" mat-menu-item>
+              <span>Next week</span>
+              <span>mon,8:00AM</span>
+            </button>
+          </div>
+
+          <div>
+            <button type="submit" [matMenuTriggerFor]="pickdatemenu" mat-menu-item>
+              <img style="margin-bottom: -3px;" src="{{clock}}">
+              <span>Pick date & time</span>
+            </button>
+          </div>
+        </mat-menu>
+
+        <mat-menu #pickdatemenu="matMenu" class="div-style">
+          <div fxLayout="row" fxLayoutGap="2px">
+            <div (click)="showform1()">
+              <img src="{{backarrow}}">
+            </div>
+            <b>pick date & time:</b>
+          </div>
+
+          <div>
+            <div>
+              <input [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Date Time" [(ngModel)]="model.notePreferences.remainder">
+              <owl-date-time #dt1></owl-date-time>
+            </div>
+          </div>
+
+          <div>
+            <button class="done-btn-style" (click)="pickDateTime(note)" type="submit" mat-menu-item>
+              <span>Done</span>
+            </button>
+          </div>
+        </mat-menu>
+
+
+        <button mat-icon-button>
+          <mat-icon>person_add</mat-icon>
+        </button>
+        <button mat-icon-button class="color-comp" style="background-color:inherit" [matMenuTriggerFor]="colormenu">
+          <mat-icon>color_lens</mat-icon>
+
+
+        </button>
+
+        <mat-menu #colormenu="matMenu" [overlapTrigger]="false">
+          <div mat-menu-item *ngFor="let color of colors" fxLayout="row" fxLayoutGap="2px">
+            <div *ngFor="let color1 of color">
+              <div [style.background-color]="color1" [ngClass]="color1 == selectedcolor ?  'active' :  (color1 == 'white'  ?  'white-border color-pallete' :  'color-pallete')"
+                (click)="setColor(color1)">
+              </div>
+            </div>
+
+          </div>
+
+        </mat-menu>
+
+        <button mat-icon-button>
+          <mat-icon>image</mat-icon>
+        </button>
+        <button mat-icon-button (click)="archive()">
+          <mat-icon>{{model.notePreferences.status == 'ARCHIVE' ? 'unarchive' : 'archive'}}</mat-icon>
+        </button>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item [matMenuTriggerFor]="labelmenu">Add Label</button>
+        </mat-menu>
+
+        <mat-menu #labelmenu="matMenu">
+          <span style="display: block;">Label Note</span>
+          <div *ngFor="let label of labels">
+            <mat-checkbox (change)="addOrRemoveLabel($event, label)">{{label.name}}</mat-checkbox>
+          </div>
+        </mat-menu>
+
+      </div>
+      <div fxFlex.lg="10" fxFlex.md="10" fxFlex.sm="10" fxFlex.xs="10">
+        <button style="right: 10px" mat-button class="btn-close" (click)="hideNote();AddNote()">CLOSE</button>
+      </div>
+    </div>
+
+  </mat-card>
+</div>
+  <!-- <div *ngFor="let notes of demo | filter:{pin:true, status:'NONE'}">
+    <div *ngIf="note.notePreferences.pin">Pinned</div>
+  </div>
+  -->
+
+<div *ngFor="let notes of demo | filter:{pin:true, status:'NONE'}; let i = index">
+  <div *ngIf="i == 0">Pinned</div>
+</div>
+
+
+  <!-- <div *ngFor="let notes of demo | filter:{pin:true, status:'NONE'}">
+  <div *ngIf="notes.pin">Pinned</div>
+</div> -->
+<!--====================================== Pinned =======================================================-->
+
+<div fxLayoutAlign="center center">
+  <div [fxLayout]="layout" fxLayout.xs="column" fxLayoutAlign="center center" style="width:930px;padding-bottom:10vh">
+    <div *ngFor="let notes of demo | filter:{pin:true, status:'NONE'} | datefilter">
+      <app-notetemplate [note]="notes" [layout]="layout"> </app-notetemplate>
+    </div>
+  </div>
+</div>
+
+
+<!--======================================== Others ============================================================-->
+
+
+<div *ngFor="let notes of demo | filter:{pin:true, status:'NONE'}; let i = index">
+    <div *ngIf="i == 0">Others</div>
+</div>
+  
+<div fxLayoutAlign="center center">
+  <div [fxLayout]="layout" fxLayout.xs="column" fxLayoutAlign="center center center" style="width:930px;padding-bottom:10vh">
+    <div *ngFor="let notes of demo | filter:{pin:false, status:'NONE'} | datefilter">
+      <app-notetemplate [note]="notes" [layout]="layout"> </app-notetemplate>
+    </div>
+  </div>
+</div>

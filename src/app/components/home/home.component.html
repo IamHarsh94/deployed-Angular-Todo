@@ -1,0 +1,156 @@
+<mat-toolbar appColorTools class="toptoolbar" style="background:sienna">
+  <div fxLayout="row" fxFlex.lg="15" fxFlex.md="20" fxFlex.sm="30" fxFlex.lt-sm="30" fxFlex.lt-xs="15" fxFlex.xs="55" fxLayoutGap="10px"
+    fxLayoutGap.xs="2px">
+    <button mat-icon-button mat-button (click)="sidenav.toggle()">
+      <mat-icon class="toolitems">menu</mat-icon>
+    </button>
+    <div class="toolitems logo">
+      <span fxShow="true" fxHide.lt-sm="true" [innerHTML]="dynamicName()"></span>
+      <span fxHide="true" fxShow.lt-sm="true" [innerHTML]="dynamicName()"></span>
+    </div>
+  </div>
+
+  <div style="height: 45px;" fxFlex.lg="70" fxFlex.md="60" fxFlex.lt-sm="60" fxFlex.sm="80" fxFlex.lt-xs="30" fxFlex.xs="10" fxFlex.st-xs="10" fxLayoutGap="5px;"
+    fxLayout="row" class="search-div" fxShow="true" fxHide.lt-sm="true" [ngClass]=" searchcolor ?  'searchbar' : 'search-div' ">
+    
+    <mat-icon class="search-input-icons" >search</mat-icon> 
+    
+    <input contenteditable="true" placeholder="Search" class="search-input" routerLink="/home/search" [(ngModel)]="text" (ngModelChange)="searchNotes()"
+      (click)="searchtext()" (blur)="searchtext()" style="background-color:transparent;font-family: Georgia, 'Times New Roman', Times, serif;font-size: 25px;">   
+      <mat-icon class="search-input-icons" style="padding-left: 55px;" (click)="clearSearchText()">close</mat-icon>
+  </div>
+
+  <div fxHide="true" fxShow.lt-sm="true" fxFlex.lg="60" fxFlex.md="70" fxFlex.sm="65" fxFlex.lt-sm="60" fxFlex.xs="8" fxFlex.st-xs="10"
+    fxLayoutGap="10px;" fxLayout="row" (click)="viewsearch()">
+    <button mat-icon-button mat-button>
+      <mat-icon class="search-icon toolitems">search</mat-icon>
+    </button>
+  </div>
+
+
+  <div fxLayout="row" fxFlex.lg="10" fxFlex.md="10" fxFlex.sm="15" fxFlex.lt-sm="40" fxFlex.xs="25" fxLayoutGap="10px" fxLayoutGap.xs="0px"
+    fxFlex.st.xs="35">
+    <!-- <button mat-icon-button mat-button>
+      <mat-icon class="toolitems">refresh</mat-icon>
+    </button> -->
+
+    <button mat-button *ngIf="list"  style="border-radius: 35px;" (click)="changeView()" fxShow="true" fxHide.lt-sm="true">
+      <mat-icon matTooltip="list-grid view" class="toolitems">view_list</mat-icon>
+    </button>
+
+    <button  mat-button *ngIf="grid" (click)="changeView()" fxShow="true" fxHide.lt-sm="true">
+      <mat-icon class="toolitems">apps</mat-icon>
+    </button>
+
+    <!-- <button mat-icon-button mat-button>
+      <mat-icon class="toolitems">notifications_none</mat-icon>
+    </button> -->
+
+
+    <button fxShow="true" style="float: right;" matTooltip="Profile" mat-mini-fab style="background-color: transparent; border-radius: 13px;" *ngIf="logedUser.picUrl == null || logedUser.picUrl == undefined"
+      [matMenuTriggerFor]="appMenu">
+      <mat-icon style="color :inherit">account_circle</mat-icon>
+    </button>
+
+   
+     <img [matMenuTriggerFor]="appMenu" class="profile-image" src="{{logedUser.picUrl}}" *ngIf="logedUser.picUrl != null || logedUser.picUrl != undefined">
+   
+    <div>
+      <mat-menu #appMenu="matMenu" [overlapTrigger]="false">
+
+        <div fxLayout="column" style="padding: 10px;" fxLayoutGap="10px">
+
+          <div fxLayout="row" class="word-wrap" style="margin-bottom: 10px;word-wrap: break-word;width: 96%;border-bottom: none;" fxLayoutGap="15px" fxFlex="100">
+
+            <div fxFlex="30" (click)="triggerImageUpload()">
+              <img matTooltip="Profile" *ngIf="logedUser.picUrl != null || logedUser.picUrl != undefined" class="mat-profile" src="{{logedUser.picUrl}}">
+              <mat-icon matTooltip="Profile" style="font-size: 70px; color: sienna" *ngIf="logedUser.picUrl == null || logedUser.picUrl == undefined">account_circle</mat-icon>
+            </div>
+
+            <input style="display: none;" type="file" id="image-upload-button" (change)="profileImageUpload($event)">
+            
+            <div fxFlex="70" fxLayout="column">
+              <div style="font-size: 18px;font-style: oblique;">{{logedUser.name}}</div>
+              <div>{{logedUser.email}}</div>
+            </div>
+          
+          </div>
+          <div fxLayout="row">
+            <button style="left: 159px;" mat-raised-button (click)="logout()" color="primary">Sign out</button>
+          </div>
+
+        </div>
+      </mat-menu>
+    </div>
+  </div>
+
+</mat-toolbar>
+
+<mat-sidenav-container fxFlexFill class="example-container">
+  <mat-sidenav #sidenav opened fxLayout="column" [mode]="screenWidth > 840 ? 'side':'over' " class="sidenav">
+
+    <div fxLayout="column" fxLayoutGap="5px">
+
+      <div>
+        <button mat-menu-item routerLink="/home/" routerLinkActive="active">
+          <mat-icon style="color :rgb(87, 83, 83);">lightbulb_outline</mat-icon>
+          <span style="color :rgb(87, 83, 83);">Notes</span>
+        </button>
+      </div>
+
+
+
+      <div>
+        <button mat-menu-item routerLink="/home/trash" routerLinkActive="active">
+          <mat-icon style="color :rgb(87, 83, 83);">delete</mat-icon>
+          <span style="color :rgb(87, 83, 83);">Trash</span>
+        </button>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div>
+        <button mat-menu-item routerLink="/home/archive" routerLinkActive="active">
+          <mat-icon style="color :rgb(87, 83, 83);">assignment_returned</mat-icon>
+          <span style="color :rgb(87, 83, 83);">Archive</span>
+        </button>
+      </div>
+
+      <div>
+        <button mat-menu-item routerLink="/home/reminder" routerLinkActive="active">
+          <mat-icon style="color :rgb(87, 83, 83);">touch_app</mat-icon>
+          <span style="color :rgb(87, 83, 83);">Reminder</span>
+        </button>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div>
+        <button mat-menu-item routerLink="/home/reminder" routerLinkActive="active">
+          <span style="color :rgb(87, 83, 83);">Labels</span>
+          <span style="color :rgb(87, 83, 83); margin-left: 60px" (click)="addLabel()">Edit</span>
+        </button>
+      </div>
+
+
+
+      <div *ngFor="let labelObj of labels;">
+        <div style="cursor: pointer" fxLayout="row" fxLayoutGap="10px" class="sidebar-menu" [routerLink]="['/home/label', labelObj.name]">
+          <mat-icon style="color :rgb(87, 83, 83);">label</mat-icon>
+          <span class="sidebar-labels">{{labelObj.name}}</span>
+        </div>
+      </div>
+
+      <div fxLayout="row" mat-menu-item (click)="addLabel()">
+        <mat-icon style="color :rgb(87, 83, 83);    margin-top: 10px; ">add</mat-icon>
+        <span style="color :rgb(87, 83, 83);">Create new label</span>
+      </div>
+
+      <mat-divider></mat-divider>
+    </div>
+
+  </mat-sidenav>
+  <mat-sidenav-content style="margin-top:4%; background-color:rgb(230, 230, 230);">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

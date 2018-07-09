@@ -1,0 +1,7 @@
+<div fxLayoutAlign="center center" style="margin-top:20vh">
+  <div [fxLayout]="layout" fxLayout.xs="column" fxLayoutAlign="start start" style="width:930px;padding-bottom:10vh" >
+    <div *ngFor="let note of notes | labelFilter:labelName" >
+      <app-notetemplate [note]="note" [layout]="layout"></app-notetemplate>
+    </div>
+  </div>
+</div>

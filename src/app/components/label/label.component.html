@@ -1,0 +1,42 @@
+<div style="font-size: 18px;font-weight: 500;font-family:'Roboto',arial,sans-serif;color:royalblue">
+  Edit Labels
+</div>
+<mat-form-field floatLabel="never" style="outline:none">
+  <input type="text" placeholder="Create new label " matInput [(ngModel)]="label.name" />
+
+  <button mat-button *ngIf="label.name" mat-icon-button matPrefix (click)="label=' ' ">
+    
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <button mat-button mat-icon-button matSuffix (click)="done()">
+    <mat-icon>done</mat-icon>
+  </button>
+  
+</mat-form-field>
+
+<div *ngIf="alllabels">
+  <div *ngFor="let labelObj of alllabels">
+    <div fxLayout="row" fxLayoutGap="10px">
+
+      <div fxFlex="90" fxLayoutAlign="start center" class="editlabel">
+        <mat-icon class="label-icon edit2">label</mat-icon>
+        <mat-icon class="label-icon edit" (click)="deleteLabel(labelObj)">delete</mat-icon>
+        <span id="labelTitle">
+          <input type="text" class="label-input" [(ngModel)]="labelObj.name" />
+        </span>
+      </div>
+
+      <div fxFlex="10">
+        <mat-icon (click)="editLabel(labelObj)" class="label-icon">edit</mat-icon>
+      </div>
+
+      <!-- <div fxFlex="10" class="divStyle">
+      <mat-icon (click)="updateLabel(label.title)">done</mat-icon>
+  </div> -->
+    </div>
+  </div>
+</div>
+<div role="button" class="doneButton" (click)="close()">
+  DONE
+</div>

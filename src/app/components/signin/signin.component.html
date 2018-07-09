@@ -1,0 +1,68 @@
+
+<body>
+  <mat-toolbar class="toolbar">
+    <img src="/assets/icons/bridgeicon.jpg" class="img">
+  </mat-toolbar>
+  <div fxLayoutAlign="center center" >
+    <mat-card fxFlex.lg="40" fxFlex.md="45" fxFlex.sm="60" fxFlex.lt-sm="80" fxFlex.xs="100" fxFlex.lt-xs="100" style="margin-top: 35px;box-shadow: 0 2px 20px rgba(0,0,0,.19), 0 4px 6px rgba(0,0,0,.23);">
+      <h3>
+        <strong>Login</strong>
+      </h3>
+      <form #loginForm="ngForm" (ngSubmit)="login()">
+        <div fxLayout="row" fxLayoutGap="10px">
+          <div class="fb" fxFlex="50">
+            <div fxLayout="row">
+              <img src="/assets/icons/ficon.jpeg" class="fbimg" style="margin-left:10px">
+              <h5 class="fbtext">Facebook</h5>
+            </div>
+          </div>
+          <div class="fb" fxFlex="50">
+            <div fxLayout="row">
+              <img src="/assets/icons/images.png" class="gimg" style="margin-left:10px">
+              <h5 class="gtext">Google</h5>
+            </div>
+          </div>
+        </div>
+        </form>
+
+      <div fxLayoutAlign="center center">
+        <span class="msg">All your activity will remain private</span>
+      </div>
+      <form #loginForm="ngForm" (ngSubmit)="login()">
+        <div fxLayout="column">
+          <label class="txt">Email ID / Username</label>
+          <mat-form-field>
+            <input fxFlexOffset="15px" style="margin-top: -12px;" matInput type="email" name="email" [(ngModel)]="model.email" [formControl]="email" required />
+            <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+          </mat-form-field>
+          <label class="txt">Your Password</label>
+          <mat-form-field>
+            <input fxFlexOffset="15px" style="margin-top: -12px;" matInput type="password" name="password" [(ngModel)]="model.password"
+                   minlength="8" [formControl]="password" required>
+            <mat-error *ngIf="password.invalid">{{getErrorMessage1()}}</mat-error>
+          </mat-form-field>
+          <div>
+            <a>
+              <h5 class="forgot" (click)="OpenforgotDialog()">Forgot Password?</h5>
+            </a>
+          </div>
+          <div fxLayout="column">
+            <button mat-raised-button color="primary" type="submit" fxFlex="100">Login</button>
+          </div>
+          <div>
+            <span class="txt">Not a member yet?</span>
+            <button mat-button color="primary" (click)="signUp()">
+              Register now
+            </button>
+          </div>
+
+
+        </div>
+        </form>
+
+
+</mat-card>
+  </div>
+</body>
+
+
